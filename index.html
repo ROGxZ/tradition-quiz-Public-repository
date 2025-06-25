@@ -13,12 +13,14 @@
 body {
   font-family: 'Tahoma', sans-serif;
   text-align: center;
-  background-image: url('bg.png');
-  background-size: cover;
-  background-position: center center;
+  background-image: url('URL-ภาพของคุณ');
+  background-size: cover;         /* ทำให้ภาพขยายเต็มพื้นที่โดยรักษาสัดส่วน */
+  background-position: center;    /* จัดภาพให้อยู่กึ่งกลาง */
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  color: #222;
+  background-attachment: fixed;   /* บางทีมือถือไม่รองรับ ให้ลองลบบรรทัดนี้ถ้าปัญหายังอยู่ */
+  min-height: 100vh;              /* ความสูงอย่างน้อยเต็มหน้าจอ */
+  margin: 0;
+  padding: 0;
 }
 
 
