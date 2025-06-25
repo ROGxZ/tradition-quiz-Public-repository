@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>เกมถาม-ตอบ ประเพณีไทย</title>
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+      text-align: center;
+      background-image: url('bg.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #222;
+      padding: 20px;
+      margin: 0;
+    }
+
+    #question-box, #result-box {
+      display: none;
+    }
+
+    .btn {
+      background-color: #ffffffcc;
+      border: 2px solid #f0a500;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #ffe07d;
+    }
+
+    .correct {
+      background-color: #a6f7a1 !important;
+      animation: flash 0.4s ease-in-out;
+    }
+
+    .wrong {
+      background-color: #f7a1a1 !important;
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes flash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.85);
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="start-box">
+    <h1>🎉 เกมถาม-ตอบ ประเพณีไทย 🎉</h1>
+    <p>ทดสอบความรู้เกี่ยวกับวัฒนธรรมไทย ตอบคำถามให้ครบ 7 ข้อ</p>
+    <button class="btn" onclick="startGame()">เริ่มเกม</button>
+  </div>
+
+  <div class="container" id="question-box">
+    <h2 id="question"></h2>
+    <div id="choices"></div>
+  </div>
+
+  <div class="container" id="result-box">
+    <h2>ผลคะแนนของคุณ</h2>
+    <p id="score"></p>
+    <button class="btn" onclick="location.reload()">เล่นอีกครั้ง</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "1. ประเพณีปอยส่างลอง เป็นประเพณีของจังหวัดใด?",
+        choices: ["เชียงใหม่", "แม่ฮ่องสอน", "ลำพูน", "แพร่"],
+        answer: "แม่ฮ่องสอน"
+      },
+      {
+        question: "2. ประเพณีวิ่งควายเป็นประเพณีของจังหวัดใด?",
+        choices: ["สุพรรณบุรี", "ราชบุรี", "ชลบุรี", "อ่างทอง"],
+        answer: "ชลบุรี"
+      },
+      {
+        question: "3. ประเพณีผูกเสี่ยวเป็นของภาคใด?",
+        choices: ["ภาคกลาง", "ภาคใต้", "ภาคเหนือ", "ภาคอีสาน"],
+        answer: "ภาคอีสาน"
+      },
+      {
+        question: "4. ตามความเชื่อ ทำไมถึงต้องแห่นางแมว?",
+        choices: ["เพื่อขอฝน", "เพื่อความรัก", "เพื่อขอพร", "เพื่อความสงบ"],
+        answer: "เพื่อขอฝน"
+      },
+      {
+        question: "5. ประเพณีเลี้ยงผีเป็นประเพณีดั้งเดิมของจังหวัดใด?",
+        choices: ["แพร่", "ลำพูน", "ลำปาง", "น่าน"],
+        answer: "ลำปาง"
+      },
+      {
+        question: "6. พิธีตักบาตรเทโวโรหณะเมื่อครั้งพุทธกาลที่เท่าไร?",
+        choices: ["พรรษาที่ 1", "พรรษาที่ 3", "พรรษาที่ 5", "พรรษาที่ 7"],
+        answer: "พรรษาที่ 7"
+      },
+      {
+        question: "7. วันเข้าพรรษาตรงกับวันแรมอะไร?",
+        choices: ["แรม ๑ ค่ำ เดือน ๖", "แรม ๑๕ ค่ำ เดือน ๗", "แรม ๑ ค่ำ เดือน ๘", "ขึ้น ๑ ค่ำ เดือน ๘"],
+        answer: "แรม ๑ ค่ำ เดือน ๘"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function startGame() {
+      document.getElementById('start-box').style.display = 'none';
+      document.getElementById('question-box').style.display = 'block';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('question').innerText = q.question;
+      const choicesDiv = document.getElementById('choices');
+      choicesDiv.innerHTML = '';
+
+      q.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.innerText = choice;
+        btn.className = 'btn';
+        btn.onclick = () => handleAnswer(btn, choice);
+        choicesDiv.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(btn, selected) {
+      const correct = questions[currentQuestion].answer;
+      const allButtons = document.querySelectorAll('#choices .btn');
+
+      allButtons.forEach(b => b.disabled = true); // ปิดปุ่มทั้งหมด
+
+      if (selected === correct) {
+        score++;
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('wrong');
+        // ใส่เอฟเฟกต์สีเขียวให้คำตอบที่ถูก
+        allButtons.forEach(b => {
+          if (b.innerText === correct) {
+            b.classList.add('correct');
+          }
+        });
+      }
+
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          showQuestion();
+        } else {
+          showResult();
+        }
+      }, 900); // รอแสดงแอนิเมชันก่อนเปลี่ยนคำถาม
+    }
+
+    function showResult() {
+      document.getElementById('question-box').style.display = 'none';
+      document.getElementById('result-box').style.display = 'block';
+      document.getElementById('score').innerText = `คุณได้ ${score} คะแนน จากทั้งหมด ${questions.length} ข้อ`;
+    }
+  </script>
+
+</body>
+</html>
